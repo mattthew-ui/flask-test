@@ -15,8 +15,8 @@ def yo():
 # def greetings(name):
 #     return render_template('secoed.html', name = name)
 
-@app.route('/boats')
-def boat():
+@app.route('/boats', methods = ['GET', 'POST'])
+def boat():   
     boats = conn.execute(text('select * from boats')).all()
 
     return render_template('boats.html', boats = boats[:10])
@@ -42,7 +42,17 @@ def create_boat():
 def base():
     return render_template('base.html')
 
+@app.route('/boats_search', methods=['GET', 'POST'])
+def iNeedMoreCafine():
+    search_query = request.form.get('search', '')
+    if search_query:
+        query = text("SELECT * FROM boats WHERE name LIKE :search")
+        boats = conn.execute(query, {'search': f'%{search_query}%'}).fetchall()
+    else:
+        boats = conn.execute(text('SELECT * FROM boats')).fetchall()
 
+
+    return render_template('search.html', boats = boats)
 
 # @app.route('/coffee')
 # def serveing_coffee():

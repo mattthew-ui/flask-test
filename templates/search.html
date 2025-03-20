@@ -1,0 +1,17 @@
+{%extends 'base.html'%}
+{% block body %}
+<h1>boats search reesaults</h1>
+<form method="POST">
+    <input type="text" name="search" value="{{ search_query }}" placeholder="Search by boat name...">
+    <button type="submit">Search</button>
+</form>
+{% if boats %}
+    <ul>
+        {% for boat in boats %}
+            <li>{{boat.id}} {{ boat.name }} - {{ boat.type }} - {{ boat.rental_price }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No boats found</p>
+{% endif %}
+{% endblock %}
