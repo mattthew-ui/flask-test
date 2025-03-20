@@ -1,0 +1,19 @@
+{%extends 'base.html'%}
+{% block body %}
+<div class="container">
+    <h1>Delete Boat</h1>
+
+    <form action="/delete_boat" method="POST">
+        <label for="boat_id">Boat ID:</label>
+        <input type="text" id="boat_id" name="boat_id" placeholder="Enter Boat ID" required>
+
+        <input type="submit" value="Delete Boat">
+    </form>
+
+    {% if success %}
+        <div class="success-message">{{ success }}</div>
+    {% endif %}
+    {% if error %}
+        <div class="error-message">{{ error }}</div>
+    {% endif %}
+{% endblock %}

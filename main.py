@@ -46,17 +46,44 @@ def base():
 def iNeedMoreCafine():
     search_query = request.form.get('search', '')
     if search_query:
-        query = text("SELECT * FROM boats WHERE name LIKE :search")
+        query = text("select * from boats where type like :search")
         boats = conn.execute(query, {'search': f'%{search_query}%'}).fetchall()
     else:
-        boats = conn.execute(text('SELECT * FROM boats')).fetchall()
+        boats = conn.execute(text('select * from boats')).fetchall()
 
 
     return render_template('search.html', boats = boats)
 
+@app.route('/delete_boats', methods=['GET', 'POST'])
+def ohCrapWindow():
+ if request.method == 'POST':
+        boat_id = request.form.get('boat_id')
+
+        # Validate that the boat_id is provided
+        if not boat_id:
+            return render_template('delete.html', error="Boat ID is required.")
+
+        # Check if boat_id exists in the database before attempting to delete it
+        query = text("SELECT * FROM boats WHERE id = :boat_id")
+        result = conn.execute(query, {'boat_id': boat_id}).fetchone()
+        if not result:
+            return render_template('delete.html', error="No boat found with that ID.")
+        delete_query = text("DELETE FROM boats WHERE id = :boat_id")
+        delete_result = conn.execute(delete_query, {'boat_id': boat_id})
+        conn.commit()
+
+        if delete_result.rowcount > 0:
+            return render_template('delete.html', success="Boat deleted successfully!")
+        else:
+            return render_template('delete.html', error="Failed to delete the boat.")
+
+
+
+
+ return render_template('delete.html')
 # @app.route('/coffee')
 # def serveing_coffee():
-#     return "here is your coffee"
+#     return "here is your coffee" 
 
 # @app.route('/hello/<name>')
 # def Hello(name):
