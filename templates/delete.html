@@ -1,19 +1,20 @@
 {%extends 'base.html'%}
 {% block body %}
-<div class="container">
-    <h1>Delete Boat</h1>
+<h1>Delete a Boat by Boat ID</h1>
 
-    <form action="/delete_boat" method="POST">
-        <label for="boat_id">Boat ID:</label>
-        <input type="text" id="boat_id" name="boat_id" placeholder="Enter Boat ID" required>
+<!-- Form for submitting the boat ID to be deleted -->
+<form method="POST">
+    <label for="boat_id">Boat ID:</label>
+    <input type="text" id="boat_id" name="boat_id" required>
+    <button type="submit">Delete Boat</button>
+</form>
 
-        <input type="submit" value="Delete Boat">
-    </form>
+<!-- Display error or success message if they exist -->
+{% if error %}
+    <p class="error">{{ error }}</p>
+{% endif %}
 
-    {% if success %}
-        <div class="success-message">{{ success }}</div>
-    {% endif %}
-    {% if error %}
-        <div class="error-message">{{ error }}</div>
-    {% endif %}
+{% if success %}
+    <p class="success">{{ success }}</p>
+{% endif %}
 {% endblock %}
