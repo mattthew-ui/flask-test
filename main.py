@@ -58,12 +58,9 @@ def iNeedMoreCafine():
 def ohCrapWindow():
  if request.method == 'POST':
         boat_id = request.form.get('boat_id')
-
-        # Validate that the boat_id is provided
         if not boat_id:
             return render_template('delete.html', error="Boat ID is required.")
 
-        # Check if boat_id exists in the database before attempting to delete it
         query = text("SELECT * FROM boats WHERE id = :boat_id")
         result = conn.execute(query, {'boat_id': boat_id}).fetchone()
         if not result:
@@ -81,6 +78,48 @@ def ohCrapWindow():
 
 
  return render_template('delete.html')
+
+@app.route('/boat_update', methods = ['GET', 'POST'])
+def HeyYall():
+    if request.method == 'GET':
+        return render_template('boats_update.html')
+    elif request.method == 'POST':
+        boat_id = request.form.get('boat_id')  
+        if boat_id:
+            query = text("SELECT * FROM boats WHERE id = :boat_id")
+            boat = conn.execute(query, {'boat_id': boat_id}).fetchone()
+
+            if boat:
+                if 'name' in request.form:
+                    boat_name = request.form.get('name')
+                    boat_type = request.form.get('type')
+                    owner_id = request.form.get('owner_id')
+                    rental_price = request.form.get('rental_price')
+
+                    try:
+                        update_query = text("""
+                            UPDATE boats
+                            SET name = :name, type = :type, owner_id = :owner_id, rental_price = :rental_price
+                            WHERE id = :boat_id
+                        """)
+                        conn.execute(update_query, {
+                            'boat_id': boat_id,
+                            'name': boat_name,
+                            'type': boat_type,
+                            'owner_id': owner_id,
+                            'rental_price': rental_price
+                        })
+                        conn.commit()
+                        return render_template('boats_update.html', success="Boat updated successfully!", boat_id=boat_id)
+                    except Exception as e:
+                        return render_template('boats_update.html', error=f"Failed to update boat. Error: {str(e)}")
+                else:
+                    return render_template('boats_update.html', boat=boat)
+            else:
+                return render_template('boats_update.html', error="Boat not found.")
+        else:
+            return render_template('boats_update.html', error="Boat ID is required.")
+        return render_template('boats_update.html', boats = boats)
 # @app.route('/coffee')
 # def serveing_coffee():
 #     return "here is your coffee" 
